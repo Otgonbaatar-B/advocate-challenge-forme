@@ -2,21 +2,28 @@ import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema(
   {
-    title: {
+    taskName: {
       type: String,
-      required: true,
+      required: [true, "Task name is required"],
     },
     description: {
       type: String,
-      required: true,
+      required: [true, "Description is required"],
+      minlength: [10, "Description must be at least 10 characters long"],
     },
-    isDeleted: {
+    isDone: {
       type: Boolean,
       default: false,
     },
-    isFinished: {
-      type: Boolean,
-      default: false,
+    priority: {
+      type: Number,
+      required: [true, "Priority is required"],
+      min: [1, "Priority must be at least 1"],
+      max: [5, "Priority cannot exceed 5"],
+    },
+    tags: {
+      type: [String],
+      default: [],
     },
   },
   {
