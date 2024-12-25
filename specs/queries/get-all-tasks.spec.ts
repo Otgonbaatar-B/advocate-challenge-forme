@@ -4,21 +4,31 @@ import { TaskModel } from "../../mongoose/models/Task";
 jest.mock("../../mongoose/models/Task");
 
 describe("getAllTasks query", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it("should return all non-deleted tasks", async () => {
     const mockTasks = [
       {
-        id: "1",
-        title: "Task 1",
+        _id: "1",
+        taskName: "Task 1",
         description: "Description 1",
-        isDeleted: false,
-        isFinished: false,
+        isDone: false,
+        priority: 3,
+        tags: ["tag1"],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
       {
-        id: "2",
-        title: "Task 2",
+        _id: "2",
+        taskName: "Task 2",
         description: "Description 2",
-        isDeleted: false,
-        isFinished: true,
+        isDone: true,
+        priority: 5,
+        tags: ["tag2"],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       },
     ];
 
@@ -30,7 +40,7 @@ describe("getAllTasks query", () => {
     expect(TaskModel.find).toHaveBeenCalledWith({ isDeleted: false });
   });
 
-  it("should throw error when fetch fails", async () => {
+  it("should throw an error when fetching tasks fails", async () => {
     (TaskModel.find as jest.Mock).mockRejectedValue(new Error("DB Error"));
 
     await expect(getAllTasks()).rejects.toThrow("Failed to fetch tasks");

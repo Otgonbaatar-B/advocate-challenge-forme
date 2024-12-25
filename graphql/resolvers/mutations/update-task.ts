@@ -20,33 +20,45 @@ export const updateTask = async (
 ) => {
   const updateData: any = {};
 
-  if (taskName) updateData.taskName = taskName;
-  if (description) {
-    if (description.length < 10) {
-      throw new Error("Description must be at least 10 characters long");
-    }
-    updateData.description = description;
-  }
-  if (priority) {
-    if (priority < 1 || priority > 5) {
-      throw new Error("Priority must be between 1 and 5");
-    }
-    updateData.priority = priority;
-  }
-  if (isDone !== undefined) updateData.isDone = isDone;
-  if (tags) updateData.tags = tags;
-
-  updateData.updatedAt = new Date();
-
   try {
+    if (taskName) updateData.taskName = taskName;
+    if (description) {
+      if (description.length < 10) {
+        throw new Error("Description must be at least 10 characters long");
+      }
+      updateData.description = description;
+    }
+    if (priority !== undefined) {
+      if (priority < 1 || priority > 5) {
+        throw new Error("Priority must be between 1 and 5");
+      }
+      updateData.priority = priority;
+    }
+    if (isDone !== undefined) updateData.isDone = isDone;
+    if (tags) updateData.tags = tags;
+
+    updateData.updatedAt = new Date();
+
     const updatedTask = await TaskModel.findByIdAndUpdate(taskId, updateData, {
       new: true,
     });
+
     if (!updatedTask) {
       throw new Error("Task not found");
     }
+
     return updatedTask;
   } catch (error) {
-    throw new Error("Failed to update task");
+    if (error instanceof Error) {
+      if (
+        error.message === "Task not found" ||
+        error.message.includes("Description must be") ||
+        error.message.includes("Priority must be")
+      ) {
+        throw error;
+      }
+      throw new Error(`Failed to update task: ${error.message}`);
+    }
+    throw new Error("An unknown error occurred during task update");
   }
 };

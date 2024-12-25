@@ -2,36 +2,45 @@ import { gql } from "graphql-tag";
 
 export const typeDefs = gql`
   type Task {
-    id: ID!
-    title: String!
+    _id: ID!
+    taskName: String!
     description: String!
-    isDeleted: Boolean!
-    isFinished: Boolean!
-    createdAt: String!
-    updatedAt: String!
+    isDone: Boolean!
+    priority: Int!
+    tags: [String]
+    createdAt: String
+    updatedAt: String
   }
 
-  type Query {
-    helloQuery: String
-    getAllTasks: [Task!]!
-    getFinishedTasksLists: [Task!]!
-  }
-
-  input CreateTaskInput {
-    title: String!
+  input TaskInput {
+    taskName: String!
     description: String!
+    priority: Int!
+    tags: [String]
   }
 
   input UpdateTaskInput {
-    title: String
+    taskName: String
     description: String
-    isFinished: Boolean
-    isDeleted: Boolean
+    priority: Int
+    isDone: Boolean
+    tags: [String]
+  }
+
+  type Query {
+    getDoneTasksLists: [Task]
+    searchTasks(
+      searchTerm: String
+      priority: Int
+      isDone: Boolean
+      createdBefore: String
+      createdAfter: String
+    ): [Task]
+    getAllTasks: [Task]
   }
 
   type Mutation {
-    sayHello(name: String!): String
-    addTask(input: CreateTaskInput!): Task!
-    updateTask(id: ID!, input: UpdateTaskInput!): Task!
+    addTask(input: TaskInput!): Task
+    updateTask(taskId: ID!, input: UpdateTaskInput!): Task
   }
 `;

@@ -16,57 +16,64 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
-export type CreateTaskInput = {
-  description: Scalars['String']['input'];
-  title: Scalars['String']['input'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
-  addTask: Task;
-  sayHello?: Maybe<Scalars['String']['output']>;
-  updateTask: Task;
+  addTask?: Maybe<Task>;
+  updateTask?: Maybe<Task>;
 };
 
 
 export type MutationAddTaskArgs = {
-  input: CreateTaskInput;
-};
-
-
-export type MutationSayHelloArgs = {
-  name: Scalars['String']['input'];
+  input: TaskInput;
 };
 
 
 export type MutationUpdateTaskArgs = {
-  id: Scalars['ID']['input'];
   input: UpdateTaskInput;
+  taskId: Scalars['ID']['input'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  getAllTasks: Array<Task>;
-  getFinishedTasksLists: Array<Task>;
-  helloQuery?: Maybe<Scalars['String']['output']>;
+  getAllTasks?: Maybe<Array<Maybe<Task>>>;
+  getDoneTasksLists?: Maybe<Array<Maybe<Task>>>;
+  searchTasks?: Maybe<Array<Maybe<Task>>>;
+};
+
+
+export type QuerySearchTasksArgs = {
+  createdAfter?: InputMaybe<Scalars['String']['input']>;
+  createdBefore?: InputMaybe<Scalars['String']['input']>;
+  isDone?: InputMaybe<Scalars['Boolean']['input']>;
+  priority?: InputMaybe<Scalars['Int']['input']>;
+  searchTerm?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Task = {
   __typename?: 'Task';
-  createdAt: Scalars['String']['output'];
+  _id: Scalars['ID']['output'];
+  createdAt?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  isDeleted: Scalars['Boolean']['output'];
-  isFinished: Scalars['Boolean']['output'];
-  title: Scalars['String']['output'];
-  updatedAt: Scalars['String']['output'];
+  isDone: Scalars['Boolean']['output'];
+  priority: Scalars['Int']['output'];
+  tags?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  taskName: Scalars['String']['output'];
+  updatedAt?: Maybe<Scalars['String']['output']>;
+};
+
+export type TaskInput = {
+  description: Scalars['String']['input'];
+  priority: Scalars['Int']['input'];
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  taskName: Scalars['String']['input'];
 };
 
 export type UpdateTaskInput = {
   description?: InputMaybe<Scalars['String']['input']>;
-  isDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-  isFinished?: InputMaybe<Scalars['Boolean']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
+  isDone?: InputMaybe<Scalars['Boolean']['input']>;
+  priority?: InputMaybe<Scalars['Int']['input']>;
+  tags?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  taskName?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -139,47 +146,49 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  CreateTaskInput: CreateTaskInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Task: ResolverTypeWrapper<Task>;
+  TaskInput: TaskInput;
   UpdateTaskInput: UpdateTaskInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
-  CreateTaskInput: CreateTaskInput;
   ID: Scalars['ID'];
+  Int: Scalars['Int'];
   Mutation: {};
   Query: {};
   String: Scalars['String'];
   Task: Task;
+  TaskInput: TaskInput;
   UpdateTaskInput: UpdateTaskInput;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  addTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationAddTaskArgs, 'input'>>;
-  sayHello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationSayHelloArgs, 'name'>>;
-  updateTask?: Resolver<ResolversTypes['Task'], ParentType, ContextType, RequireFields<MutationUpdateTaskArgs, 'id' | 'input'>>;
+  addTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationAddTaskArgs, 'input'>>;
+  updateTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationUpdateTaskArgs, 'input' | 'taskId'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getAllTasks?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
-  getFinishedTasksLists?: Resolver<Array<ResolversTypes['Task']>, ParentType, ContextType>;
-  helloQuery?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  getAllTasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Task']>>>, ParentType, ContextType>;
+  getDoneTasksLists?: Resolver<Maybe<Array<Maybe<ResolversTypes['Task']>>>, ParentType, ContextType>;
+  searchTasks?: Resolver<Maybe<Array<Maybe<ResolversTypes['Task']>>>, ParentType, ContextType, Partial<QuerySearchTasksArgs>>;
 };
 
 export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = {
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  isDeleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  isFinished?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isDone?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  priority?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  taskName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
